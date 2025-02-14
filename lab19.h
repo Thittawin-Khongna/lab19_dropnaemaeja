@@ -14,7 +14,7 @@ class Unit{
 		int atk;
 		int def;
 		bool guard_on;		
-	public:			
+public:			
 		void create(string);
 		void showStatus();
 		void newTurn();
@@ -48,7 +48,7 @@ void Unit::showStatus(){
 	if(type == "Hero"){
 		cout << "---------------------------------------\n"; 
 		cout << name << "\n"; 
-		cout << "HP: " << hp << "/" << hpmax << "\tATK: "<< atk << "\t\tDEF: "<< def;		
+		cout << "HP: " << hp << "/" << hpmax << "\tATK: "<< atk << "\t\tDEF: "<< def; 		
 		cout << "\n---------------------------------------\n";
 	}	
 	else if(type == "Monster"){
@@ -63,21 +63,45 @@ void Unit::newTurn(){
 	guard_on = false;
 }
 
+bool Unit::isDead() {
+	return hp <= 0;
+}
 
+void Unit::guard() {
+	guard_on = true;
+}
 
-/////////////////////////////////////////////////////////////////////////////////////
-//Write function members isDead(), guard(), heal(), beAttacked(), and attack() here//
-/////////////////////////////////////////////////////////////////////////////////////
+int Unit::beAttacked(int opp_atk) {
+	int damage;
+	if (guard_on) {
+		damage = (opp_atk - def) / 3;
+	} else {
+		damage = opp_atk - def;
+	}
+	if (damage < 0) damage = 0;
+	hp -= damage;
+	if (hp < 0) hp = 0;
+	return damage;
+}
 
+int Unit::attack(Unit &target) {
+	return target.beAttacked(atk);
+}
 
+int Unit::heal() {
+	int heal_amount = rand() % 21 + 10;
+	int actual_heal = min(heal_amount, hpmax - hp);
+	hp += actual_heal;
+	return actual_heal;
+}
 
 void drawScene(char p_action,int p,char m_action,int m){
 	cout << "                                                       \n";
 	if(p_action == 'A'){
 	cout << "                                       "<< -p <<"\n";
 	}else{
-	cout << "                                                       \n";	
-	}	
+	cout << "                                                       \n"; 	
+	} 	
 	cout << "                                *               *      \n";
 	cout << "                                **  *********  **      \n";
 	cout << "                                ****         ****      \n";
@@ -86,18 +110,18 @@ void drawScene(char p_action,int p,char m_action,int m){
 	}else if(m_action == 'G'){
 	cout << "                                 *** **   ** ***       Guard!\n";
 	}else{
-	cout << "                                 *** **   ** ***       \n";	
+	cout << "                                 *** **   ** ***       \n"; 	
 	}
 	cout << "                                  ** **   ** **        \n";
 	cout << "                   ***             *         *         \n";
 	if(p_action == 'A'){
-	cout << "        Attack!    ***  *           *********          \n";		
+	cout << "        Attack!    ***  *           *********          \n"; 		
 	}else if(p_action == 'H'){
 	cout << "      Heal! +" << setw(2) << p << "    ***  *           *********          \n";
 	}else if(p_action == 'G'){
 	cout << "         Guard!    ***  *           *********          \n";
 	}else{
-	cout << "                   ***  *           *********          \n";	
+	cout << "                   ***  *           *********          \n"; 	
 	}
 	cout << "                    *  *       ***  *  *  *            \n";
 	cout << "                  *****           **   *   *           \n";
@@ -107,7 +131,6 @@ void drawScene(char p_action,int p,char m_action,int m){
 	cout << "                                                       \n";
 };
 
-
 void playerWin(){	
 	cout << "*******************************************************\n";
 	for(int i = 0; i < 3; i++) cout << "*                                                     *\n";
@@ -115,7 +138,6 @@ void playerWin(){
 	for(int i = 0; i < 3; i++) cout << "*                                                     *\n";
 	cout << "*******************************************************\n";
 };
-
 
 void playerLose(){
 	cout << "*******************************************************\n";
